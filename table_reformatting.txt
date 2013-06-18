@@ -1,13 +1,25 @@
+#Shell script to rearrange sampleID table for mothur oligo input file
+#Basic mothur oligo file format (hashtags to be ommited in actual file)
+	#forward ATGCCCATCTACCGA
+	#barcode AATGGATT Sample1
+#For more details on mothur oligo format, see http://www.mothur.org/wiki/Oligos_File
+
+
+#Extract forward primer sequence
 echo "forward " `grep -v \# ${1} | head -1 | cut -f 3` | tr " " "\t" > forward.txt
 
+#Extract columns 2 and 4
 grep -v \# ${1} | cut -f 2,4 > tmp1
 
+#Add "barcode" text
 for n in $(cat tmp1)
 do
 	echo "barcode" >> barcode.txt;
 done
 
+#Concatenate temporary files
 paste barcode.txt tmp1 > tmp2
 cat forward.txt tmp2 > ${1}.oligo
 
+#Clean up temporary files
 rm barcode.txt forward.txt tmp1 tmp2
